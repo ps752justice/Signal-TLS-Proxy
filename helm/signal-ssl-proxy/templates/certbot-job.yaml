@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: certbot-job
+  labels:
+    app: certbot-job
+spec:
+  template:
+    metadata:
+      name: certbot-job
+      labels:
+        app: certbot-job
+    spec:
+      containers:
+      - name: certbot-job
+        image: certbot/certbot:latest
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - >-
+            mkdir -p "/etc/letsencrypt/conf" &&
+            curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "/etc/letsencrypt/conf/options-ssl-nginx.conf" &&
+            curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "/etc/letsencrypt/conf/ssl-dhparams.pem" &&
+            sleep 60 &&
+            certbot certonly --standalone --register-unsafely-without-email -d {{ .Values.domain }} --agree-tos --force-renewal &&
+            ln -fs /etc/letsencrypt/live/{{ .Values.domain }}/ /etc/letsencrypt/active'
+        ports:
+        - name: http
+          containerPort: 80
+        volumeMounts:
+          - name: certbot-conf-pvc
+            mountPath: /etc/letsencrypt
+          - name: certbot-www-pvc
+            mountPath: /var/www/certbot
+      volumes:
+        - name: certbot-conf-pvc
+          persistentVolumeClaim:
+            claimName: certbot-conf-pvc
+        - name: certbot-www-pvc
+          persistentVolumeClaim:
+            claimName: certbot-www-pvc
+      restartPolicy: Never

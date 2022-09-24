@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-terminate
+  name: nginx-terminate-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-terminate
+  template:
+    metadata:
+      labels:
+        app: nginx-terminate
+    spec:
+      containers:
+      - name: nginx-terminate
+        image: ps752justice/nginx-terminate:latest
+        command: ["/bin/sh", "-c", 'while :; do sleep 6h & wait $${!}; /opt/nginx/sbin/nginx -s reload; done & /opt/nginx/sbin/nginx -c /etc/nginx/conf.d/nginx.conf -g "daemon off;"']
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: nginx-terminate-config
+          mountPath: /etc/nginx/conf.d
+        - name: certbot-conf-pvc
+          mountPath: /etc/letsencrypt
+        - name: certbot-www-pvc
+          mountPath: /var/www/certbot
+      imagePullSecrets:
+        - name: ps752justice-image-pull-secret
+      # Load the configuration files for nginx
+      volumes:
+        - name: nginx-terminate-config
+          configMap:
+            name: nginx-terminate-config
+        - name: certbot-conf-pvc
+          persistentVolumeClaim:
+            claimName: certbot-conf-pvc
+        - name: certbot-www-pvc
+          persistentVolumeClaim:
+            claimName: certbot-www-pvc
