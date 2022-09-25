@@ -5,7 +5,7 @@ metadata:
     app: nginx-terminate
   name: nginx-terminate-deploy
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: nginx-terminate

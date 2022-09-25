@@ -40,8 +40,8 @@ data:
     
             ssl_certificate /etc/letsencrypt/active/fullchain.pem;
             ssl_certificate_key /etc/letsencrypt/active/privkey.pem;
-            include /etc/letsencrypt/options-ssl-nginx.conf;
-            ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+            include /etc/letsencrypt/conf/options-ssl-nginx.conf;
+            ssl_dhparam /etc/letsencrypt/conf/ssl-dhparams.pem;
          }
     
     }

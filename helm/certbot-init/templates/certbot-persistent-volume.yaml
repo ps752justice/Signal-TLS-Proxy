@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: certbot-conf-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    path: /{{ .Values.certbot_init.nfs_file_share }}
+    server: {{ .Values.certbot_init.nfs_ip }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: certbot-www-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    path: /{{ .Values.certbot_init.nfs_file_share }}
+    server: {{ .Values.certbot_init.nfs_ip }}
