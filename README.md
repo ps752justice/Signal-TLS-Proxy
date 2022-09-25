@@ -34,14 +34,14 @@ helm install -n signal-tls-proxy certbot-init helm/certbot-init -f helm/values.y
 export CERTBOT_JOB_SERVICE_IP=$(kubectl get svc -n signal-tls-proxy certbot-job-service -o yaml 2> /dev/null | yq .status.loadBalancer.ingress.0.ip)
 echo $CERTBOT_JOB_SERVICE_IP
 ```
-1. change the DNS record of the URL to the ip CERTBOT_JOB_SERVICE_IP.
-1. wait for the job in GKE to end, meaning proper certificates are generated.
-1. install the chart signal-tls-proxy
+2. change the DNS record of the URL to the ip CERTBOT_JOB_SERVICE_IP.
+3. wait for the job in GKE to end, meaning proper certificates are generated.
+4. install the chart signal-tls-proxy
 ```shell
 helm install -n signal-tls-proxy signal-tls-prox helm/signal-tls-proxy -f helm/values.yaml
 export NGINX_SERVICE_IP=$(kubectl get svc -n signal-tls-proxy nginx-terminate-service -o yaml 2> /dev/null | yq .status.loadBalancer.ingress.0.ip)
 echo $NGINX_SERVICE_IP
 ```
-1. take the printed ip and change the DNS record for the proxy URL (proxy.ps752justice.com) to that IP.
+5. take the printed ip and change the DNS record for the proxy URL (proxy.ps752justice.com) to that IP.
 
 Your proxy is now running! You can share this with the URL `https://signal.tube/#<your_host_name>`
