@@ -1,0 +1,8 @@
+certbot_init:
+  # name of the file share on the Filestore instance that the generated certificates will be stored to
+  nfs_file_share: "vol1"
+  # IP address for the Filestore instance
+  nfs_ip: "10.20.30.40"
+nginx:
+  # domain that the proxy will be accessible from
+  domain: proxy.example.com

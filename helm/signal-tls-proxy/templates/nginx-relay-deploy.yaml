@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-relay
+  name: nginx-relay-deploy
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: nginx-relay
+  template:
+    metadata:
+      labels:
+        app: nginx-relay
+    spec:
+      containers:
+      - name: nginx-relay
+        image: ps752justice/nginx-relay:latest
+        command: ["/bin/sh", "-c", 'while :; do sleep 6h & wait $${!}; /opt/nginx/sbin/nginx -s reload; done & /opt/nginx/sbin/nginx -c /etc/nginx/conf.d/nginx.conf -g "daemon off;"']
+        ports:
+          - containerPort: 4433
+        volumeMounts:
+        - name: nginx-relay-config
+          mountPath: /etc/nginx/conf.d
+      imagePullSecrets:
+        - name: ps752justice-image-pull-secret
+      # Load the configuration files for nginx
+      volumes:
+        - name: nginx-relay-config
+          configMap:
+            name: nginx-relay-config
