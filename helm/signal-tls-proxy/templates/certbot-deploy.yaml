@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: certbot
+  name: certbot-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: certbot
+  template:
+    metadata:
+      labels:
+        app: certbot
+    spec:
+      containers:
+      - name: certbot
+        image: certbot/certbot:latest
+        command: ["/bin/sh", "-c", 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;']
+        volumeMounts:
+        - name: certbot-conf-pvc
+          mountPath: /etc/letsencrypt
+        - name: certbot-www-pvc
+          mountPath: /var/www/certbot
+      # Load the configuration files for nginx
+      volumes:
+        - name: certbot-conf-pvc
+          persistentVolumeClaim:
+            claimName: certbot-conf-pvc
+        - name: certbot-www-pvc
+          persistentVolumeClaim:
+            claimName: certbot-www-pvc

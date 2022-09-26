@@ -5,7 +5,7 @@ metadata:
     app: nginx-relay
   name: nginx-relay-deploy
 spec:
-  replicas: 5
+  replicas: {{ .Values.nginx.replicas }}
   selector:
     matchLabels:
       app: nginx-relay
