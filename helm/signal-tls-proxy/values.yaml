@@ -1,3 +1,5 @@
 nginx:
   # domain that the proxy will be accessible from
   domain: proxy.example.com
+  # number of replicas for nginx-terminate and nginx-relay
+  replicas: 2
